@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 "use client";
 
-import React from "react";
-import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation"; // Changed from next/router
+import { useAuth } from "@/context/AuthContext"; // Import custom authentication context
 
 import {
   Card,
@@ -20,11 +21,25 @@ import { RainbowButton } from "@/components/magicui/rainbow-button";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 
 export default function SignIn() {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  const { login } = useAuth(); // Use custom authentication
   const router = useRouter();
-  const handleSignIn = () => {
-    router.push("/dashboard/page");
   const { theme } = useTheme();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignIn = async () => {
+    try {
+      const success = login(email, password);
+      if (success) {
+        router.push("/dashboard"); // Navigate to Dashboard
+      } else {
+        alert("Invalid credentials"); // Show error message
+      }
+    } catch (err) {
+      console.error("Error signing in:", err);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <Card className="w-full max-w-md">
@@ -40,11 +55,20 @@ export default function SignIn() {
               <div className="grid gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="name@example.com" />
+                  <Input 
+                    id="email" 
+                    value={email} 
+                    type="email" 
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@example.com" />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" />
+                  <Input 
+                    id="password" 
+                    value={password} 
+                    type="password"
+                    onChange={(e) => setPassword(e.target.value)} />
                 </div>
               </div>
             </form>
@@ -57,6 +81,4 @@ export default function SignIn() {
       </Card>
     </div>
   );
-}
-
 }
