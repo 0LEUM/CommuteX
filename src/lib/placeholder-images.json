@@ -1,0 +1,28 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "A modern cityscape at dusk",
+      "imageUrl": "https://images.unsplash.com/photo-1763815271727-114744fc1f7f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxtb2Rlcm4lMjBjaXR5c2NhcGV8ZW58MHx8fHwxNzYzOTk1MTMzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern cityscape"
+    },
+    {
+      "id": "parking",
+      "description": "An underground parking garage",
+      "imageUrl": "https://images.unsplash.com/photo-1637970067784-927e66e07e36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwYXJraW5nJTIwZ2FyYWdlfGVufDB8fHx8MTc2NDA5MDg1NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "parking garage"
+    },
+    {
+      "id": "transport",
+      "description": "A modern light rail train in a city",
+      "imageUrl": "https://images.unsplash.com/photo-1692942241309-8bc32474221f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxsaWdodCUyMHJhaWx8ZW58MHx8fHwxNzY0MDkyNDcxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "light rail"
+    },
+    {
+      "id": "micromobility",
+      "description": "E-scooters lined up on a sidewalk",
+      "imageUrl": "https://images.unsplash.com/photo-1617906647113-0b8b7f262c6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxlbGVjdHJpYyUyMHNjb290ZXJ8ZW58MHx8fHwxNzY0MDc5MzQzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "electric scooter"
+    }
+  ]
+}
