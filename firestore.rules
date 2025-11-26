@@ -1,0 +1,90 @@
+/**
+ * This ruleset enforces a public read-only security model for a city information application.
+ *
+ * Core Philosophy:
+ * The data for parking, public transport, and micro-mobility is considered public information,
+ * accessible to any user, including those who are not signed in. To ensure data integrity, all
+ * write operations (create, update, delete) are disabled for client applications. Data is expected
+ * to be managed exclusively by a trusted backend service (e.g., Cloud Functions, a server using the
+ * Admin SDK) which bypasses these security rules. This creates a secure, one-way data flow to users.
+ *
+ * Data Structure:
+ * Data is organized into logical, top-level collections for each major feature:
+ * - /parking_lots/{parkingLotId}
+ * - /public_transport_routes/{routeId}
+ * - /public_transport_stops/{stopId}
+ * - /micro_mobility_vehicles/{vehicleId}
+ *
+ * Real-time or frequently changing data is nested in subcollections (e.g., /parking_lots/.../sensors)
+ * to allow for efficient and targeted updates from the backend without affecting the parent documents.
+ *
+ * Key Security Decisions:
+ * - Public Read Access: All collections and subcollections are publicly readable (`get`, `list`)
+ *   to provide real-time information to all app users without requiring authentication.
+ * - Client Writes Disabled (with exception for seeding): All write permissions (`create`, `update`, `delete`) are explicitly
+ *   denied for general client-side operations. A specific rule allows creation only when seeding data.
+ * - No User-Specific Data: The model does not contain any user-specific or private data, simplifying
+ *   the rules and eliminating the need for ownership or role-based access checks.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Provides public, read-only access to parking lot information. Allows creation for seeding.
+     * @path /parking_lots/{parkingLotId}
+     */
+    match /parking_lots/{parkingLotId} {
+      allow read: if true;
+      allow create: if request.resource.data.seeding == true;
+      allow update, delete: if false;
+
+      /**
+       * @description Provides public, read-only access to individual parking sensor data.
+       * @path /parking_lots/{parkingLotId}/sensors/{sensorId}
+       */
+      match /sensors/{sensorId} {
+        allow read: if true;
+        allow write: if false;
+      }
+    }
+
+    /**
+     * @description Provides public, read-only access to public transport route definitions. Allows creation for seeding.
+     * @path /public_transport_routes/{routeId}
+     */
+    match /public_transport_routes/{routeId} {
+      allow read: if true;
+      allow create: if request.resource.data.seeding == true;
+      allow update, delete: if false;
+
+      /**
+       * @description Provides public, read-only access to real-time updates for a specific route.
+       * @path /public_transport_routes/{routeId}/real_time_updates/{updateId}
+       */
+      match /real_time_updates/{updateId} {
+        allow read: if true;
+        allow write: if false;
+      }
+    }
+
+    /**
+     * @description Provides public, read-only access to public transport stop information.
+     * @path /public_transport_stops/{stopId}
+     */
+    match /public_transport_stops/{stopId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    /**
+     * @description Provides public, read-only access to micro-mobility vehicle locations and status. Allows creation for seeding.
+     * @path /micro_mobility_vehicles/{vehicleId}
+     */
+    match /micro_mobility_vehicles/{vehicleId} {
+      allow read: if true;
+      allow create: if request.resource.data.seeding == true;
+      allow update, delete: if false;
+    }
+  }
+}

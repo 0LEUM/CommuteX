@@ -1,0 +1,355 @@
+{
+  "entities": {
+    "ParkingLot": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ParkingLot",
+      "type": "object",
+      "description": "Represents a parking lot with real-time availability information.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the parking lot."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the parking lot."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Latitude coordinate of the parking lot's location."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude coordinate of the parking lot's location."
+        },
+        "totalSpaces": {
+          "type": "number",
+          "description": "Total number of parking spaces in the lot."
+        },
+        "availableSpaces": {
+          "type": "number",
+          "description": "Number of currently available parking spaces in the lot."
+        },
+        "pricePerHour": {
+          "type": "number",
+          "description": "Price per hour for parking in the lot."
+        },
+        "sensorIds": {
+          "type": "array",
+          "description": "References to ParkingSensors. (Relationship: ParkingLot 1:N ParkingSensor)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "latitude",
+        "longitude",
+        "totalSpaces",
+        "availableSpaces",
+        "pricePerHour"
+      ]
+    },
+    "ParkingSensor": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ParkingSensor",
+      "type": "object",
+      "description": "Represents a parking sensor providing real-time occupancy data.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the parking sensor."
+        },
+        "parkingLotId": {
+          "type": "string",
+          "description": "Reference to ParkingLot. (Relationship: ParkingLot 1:N ParkingSensor)"
+        },
+        "status": {
+          "type": "string",
+          "description": "Current status of the parking space (occupied/available)."
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "Timestamp of the last status update.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "parkingLotId",
+        "status",
+        "lastUpdated"
+      ]
+    },
+    "PublicTransportRoute": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PublicTransportRoute",
+      "type": "object",
+      "description": "Represents a public transport route with real-time schedule information.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the public transport route."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of transport (bus, metro, tram, ferry)."
+        },
+        "routeName": {
+          "type": "string",
+          "description": "Name or number of the route."
+        },
+        "stops": {
+          "type": "array",
+          "description": "Array of stop IDs along the route. (Relationship: PublicTransportRoute 1:N PublicTransportStop)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "realTimeUpdates": {
+          "type": "array",
+          "description": "Array of Route Real Time updates. (Relationship: PublicTransportRoute 1:N RouteRealTimeUpdate)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "routeName",
+        "stops"
+      ]
+    },
+    "PublicTransportStop": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PublicTransportStop",
+      "type": "object",
+      "description": "Represents a stop on a public transport route.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the public transport stop."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the stop."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Latitude coordinate of the stop's location."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude coordinate of the stop's location."
+        },
+        "routeIds": {
+          "type": "array",
+          "description": "References to PublicTransportRoutes. (Relationship: PublicTransportRoute N:N PublicTransportStop)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "latitude",
+        "longitude"
+      ]
+    },
+    "RouteRealTimeUpdate": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "RouteRealTimeUpdate",
+      "type": "object",
+      "description": "Represents real-time updates for a specific route.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the real-time update."
+        },
+        "routeId": {
+          "type": "string",
+          "description": "Reference to PublicTransportRoute. (Relationship: PublicTransportRoute 1:N RouteRealTimeUpdate)"
+        },
+        "delayInMinutes": {
+          "type": "number",
+          "description": "Delay in minutes for the route."
+        },
+        "estimatedArrivalTime": {
+          "type": "string",
+          "description": "Estimated arrival time at the next stop.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "Operational status of the route (e.g., 'on time', 'delayed', 'cancelled')."
+        }
+      },
+      "required": [
+        "id",
+        "routeId",
+        "delayInMinutes",
+        "estimatedArrivalTime",
+        "status"
+      ]
+    },
+    "MicroMobilityVehicle": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "MicroMobilityVehicle",
+      "type": "object",
+      "description": "Represents a rental bike or e-scooter with real-time location and availability.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the micro-mobility vehicle."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of vehicle (bike or e-scooter)."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Latitude coordinate of the vehicle's location."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude coordinate of the vehicle's location."
+        },
+        "batteryLevel": {
+          "type": "number",
+          "description": "Current battery level of the vehicle (percentage)."
+        },
+        "available": {
+          "type": "boolean",
+          "description": "Indicates whether the vehicle is currently available for rent."
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "latitude",
+        "longitude",
+        "batteryLevel",
+        "available"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/parking_lots/{parkingLotId}",
+        "definition": {
+          "entityName": "ParkingLot",
+          "schema": {
+            "$ref": "#/backend/entities/ParkingLot"
+          },
+          "description": "Stores parking lot information with real-time availability. Includes fields for name, location, total spaces, available spaces, and price. The 'parkingLotId' is the unique identifier for each parking lot.",
+          "params": [
+            {
+              "name": "parkingLotId",
+              "description": "Unique identifier for the parking lot."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/parking_lots/{parkingLotId}/sensors/{sensorId}",
+        "definition": {
+          "entityName": "ParkingSensor",
+          "schema": {
+            "$ref": "#/backend/entities/ParkingSensor"
+          },
+          "description": "Stores parking sensor data nested under its respective parking lot.  Contains the sensor's status and last updated timestamp.",
+          "params": [
+            {
+              "name": "parkingLotId",
+              "description": "Unique identifier for the parking lot."
+            },
+            {
+              "name": "sensorId",
+              "description": "Unique identifier for the parking sensor."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/public_transport_routes/{routeId}",
+        "definition": {
+          "entityName": "PublicTransportRoute",
+          "schema": {
+            "$ref": "#/backend/entities/PublicTransportRoute"
+          },
+          "description": "Stores public transport route information, including type, route name, and associated stop IDs. 'routeId' is the unique identifier.",
+          "params": [
+            {
+              "name": "routeId",
+              "description": "Unique identifier for the public transport route."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/public_transport_routes/{routeId}/real_time_updates/{updateId}",
+        "definition": {
+          "entityName": "RouteRealTimeUpdate",
+          "schema": {
+            "$ref": "#/backend/entities/RouteRealTimeUpdate"
+          },
+          "description": "Stores real-time updates for a specific route, including delay, estimated arrival time, and operational status.",
+          "params": [
+            {
+              "name": "routeId",
+              "description": "Unique identifier for the public transport route."
+            },
+            {
+              "name": "updateId",
+              "description": "Unique identifier for the real-time update."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/public_transport_stops/{stopId}",
+        "definition": {
+          "entityName": "PublicTransportStop",
+          "schema": {
+            "$ref": "#/backend/entities/PublicTransportStop"
+          },
+          "description": "Stores public transport stop information including name, latitude, and longitude.",
+          "params": [
+            {
+              "name": "stopId",
+              "description": "Unique identifier for the public transport stop."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/micro_mobility_vehicles/{vehicleId}",
+        "definition": {
+          "entityName": "MicroMobilityVehicle",
+          "schema": {
+            "$ref": "#/backend/entities/MicroMobilityVehicle"
+          },
+          "description": "Stores micro-mobility vehicle information, including type, location, battery level, and availability.",
+          "params": [
+            {
+              "name": "vehicleId",
+              "description": "Unique identifier for the micro-mobility vehicle."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "This Firestore structure prioritizes real-time updates and efficient querying for the CityFlow application. It leverages structural segregation and denormalization to optimize performance and simplify security rules, emphasizing authorization independence.  The design caters specifically to the 'Smart Parking', 'Public Transport' and 'Micro-Mobility' features, ensuring real-time data availability as per the user request.\n\n**Smart Parking:** Parking lot and sensor data are stored separately for efficient updates.  The sensor data is nested under the parking lot to quickly query a lot's sensor status. A real-time trigger/function updates `ParkingLot.availableSpaces` whenever a sensor's status changes.\n\n**Public Transport:** Routes and stops are separate collections.  Real-time updates for routes are stored in a subcollection to allow for efficient querying of current delays/status without loading the entire route definition.\n\n**Micro-Mobility:** Vehicles are stored in a top-level collection. Vehicle locations and availability are updated in real-time.\n\n**Authorization Independence:**  There is no reliance on `get()` calls in security rules.  All necessary authorization data (e.g., ownership, membership) would be denormalized directly into the documents where it is needed if there were any user-related access control (e.g., parking reservations). Since the entities are global and public there are no user-based roles.\n\n**QAPs (Rules are not Filters):**  `list` operations are secured by the homogeneous security posture of each collection. Since no user data is stored and all entities are public, rules can be written such that filtering is not required, and indexing can be performed on any attribute without exposing data."
+  }
+}

@@ -2,13 +2,15 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Route, Navigation, Loader2, Clock, DollarSign, FileText, AlertCircle, Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import { Route, Navigation, Loader2, Clock, DollarSign, FileText, AlertCircle, Sparkles, Map } from 'lucide-react';
 import { getOptimalRoute, State } from '@/app/actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from './ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -23,6 +25,7 @@ function SubmitButton() {
 export default function RouteOptimizer() {
   const initialState: State = { message: null, errors: {} };
   const [state, dispatch] = useActionState(getOptimalRoute, initialState);
+  const generatedMapImage = state.data?.mapImageUrl;
 
   return (
     <Card className="w-full overflow-hidden shadow-lg">
@@ -63,46 +66,66 @@ export default function RouteOptimizer() {
           <SubmitButton />
         </form>
 
-        <div className="flex flex-col rounded-lg border bg-secondary/30 p-4">
-          <h3 className="mb-4 text-lg font-semibold text-center text-muted-foreground">Your Optimized Route</h3>
-          {state.data ? (
-            <div className="flex flex-col gap-4 text-sm">
-                <div>
-                  <div className="flex items-center gap-2 font-semibold">
-                    <FileText className="h-4 w-4 text-primary"/>
-                    <span>Summary</span>
+        <div className="flex flex-col rounded-lg border bg-secondary/30">
+           <Tabs defaultValue="details" className="flex h-full flex-col">
+            <TabsList className="w-full rounded-b-none rounded-t-lg">
+              <TabsTrigger value="details" className="w-full gap-2"><FileText /> Details</TabsTrigger>
+              <TabsTrigger value="map" className="w-full gap-2"><Map /> Map</TabsTrigger>
+            </TabsList>
+            <div className="flex-1 p-4">
+              <TabsContent value="details">
+                 {state.data ? (
+                  <div className="flex flex-col gap-4 text-sm">
+                      <div>
+                        <div className="flex items-center gap-2 font-semibold">
+                          <FileText className="h-4 w-4 text-primary"/>
+                          <span>Summary</span>
+                        </div>
+                        <p className="pl-6 text-muted-foreground">{state.data.routeSummary}</p>
+                      </div>
+                      <Separator />
+                      <div className="grid grid-cols-2 gap-4">
+                          <div className="flex items-center gap-2 font-semibold">
+                              <Clock className="h-4 w-4 text-primary"/>
+                              <span>Travel Time</span>
+                          </div>
+                          <p className="text-right text-muted-foreground">{state.data.estimatedTravelTime}</p>
+                          <div className="flex items-center gap-2 font-semibold">
+                              <DollarSign className="h-4 w-4 text-primary"/>
+                              <span>Est. Cost</span>
+                          </div>
+                          <p className="text-right text-muted-foreground">{state.data.costEstimate}</p>
+                      </div>
+                      <Separator />
+                      <div>
+                          <div className="flex items-center gap-2 font-semibold mb-2">
+                              <Navigation className="h-4 w-4 text-primary"/>
+                              <span>Route Details</span>
+                          </div>
+                          <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-wrap rounded-md bg-background/50 p-3">
+                            {state.data.optimalRoute}
+                          </div>
+                      </div>
                   </div>
-                  <p className="pl-6 text-muted-foreground">{state.data.routeSummary}</p>
-                </div>
-                <Separator />
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="flex items-center gap-2 font-semibold">
-                        <Clock className="h-4 w-4 text-primary"/>
-                        <span>Travel Time</span>
-                    </div>
-                    <p className="text-right text-muted-foreground">{state.data.estimatedTravelTime}</p>
-                    <div className="flex items-center gap-2 font-semibold">
-                        <DollarSign className="h-4 w-4 text-primary"/>
-                        <span>Est. Cost</span>
-                    </div>
-                    <p className="text-right text-muted-foreground">{state.data.costEstimate}</p>
-                </div>
-                 <Separator />
-                <div>
-                    <div className="flex items-center gap-2 font-semibold mb-2">
-                        <Navigation className="h-4 w-4 text-primary"/>
-                        <span>Route Details</span>
-                    </div>
-                    <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-wrap rounded-md bg-background/50 p-3">
-                      {state.data.optimalRoute}
-                    </div>
-                </div>
+                ) : (
+                  <div className="flex h-full min-h-[200px] items-center justify-center">
+                      <p className="text-center text-muted-foreground">Enter your locations to see route details.</p>
+                  </div>
+                )}
+              </TabsContent>
+              <TabsContent value="map">
+                {generatedMapImage ? (
+                   <div className="relative aspect-video w-full overflow-hidden rounded-md">
+                     <Image src={generatedMapImage} alt="AI generated map of the route" fill className="object-cover" />
+                  </div>
+                ) : (
+                  <div className="flex h-full min-h-[200px] items-center justify-center">
+                    <p className="text-center text-muted-foreground">Map will be displayed here after a route is generated.</p>
+                  </div>
+                )}
+              </TabsContent>
             </div>
-          ) : (
-             <div className="flex flex-1 items-center justify-center">
-                <p className="text-center text-muted-foreground">Enter your locations to get started.</p>
-             </div>
-          )}
+          </Tabs>
         </div>
       </CardContent>
     </Card>

@@ -65,12 +65,7 @@ Departure Time: {{{departureTime}}}
 
 Consider real-time traffic, public transport schedules, and micro-mobility options to provide the most efficient route.
 
-Provide the optimal route, estimated travel time, cost estimate, and a route summary.
-
-Optimal Route: 
-Estimated Travel Time:
-Cost Estimate:
-Route Summary:`,
+Provide the optimal route, estimated travel time, cost estimate, and a route summary.`,
 });
 
 const optimizeRouteFlow = ai.defineFlow(
