@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'CityFlow - Smart Urban Mobility',
+  title: 'CommuteX',
   description: 'An AI-powered hub for smart parking, public transport, and micro-mobility.',
 };
 
