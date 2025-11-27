@@ -31,7 +31,7 @@ export default function MainPage() {
       <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-primary/95 px-4 text-primary-foreground backdrop-blur-sm md:px-6">
         <div className="flex items-center gap-2">
           <Logo className="h-8 w-8 text-accent" />
-          <h1 className="text-xl font-bold tracking-tight">CityFlow</h1>
+          <h1 className="text-xl font-bold tracking-tight">CommuteX</h1>
         </div>
         <div className="ml-auto flex items-center gap-4">
           <SeedDatabase />
