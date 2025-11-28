@@ -54,17 +54,20 @@ export default function AuthPage() {
       setError('Password must be at least 6 characters long.');
       return;
     }
+    if (!auth) return;
     initiateEmailSignUp(auth, email, password, handleAuthError);
   };
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (!auth) return;
     initiateEmailSignIn(auth, email, password, handleAuthError);
   };
   
   const handleAnonymousSignIn = () => {
     setError(null);
+    if (!auth) return;
     initiateAnonymousSignIn(auth, handleAuthError);
   };
 

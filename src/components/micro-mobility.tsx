@@ -14,9 +14,9 @@ interface MicroMobilityVehicle {
 }
 
 const vehicleIdToDetails: { [key: string]: { name: string, price: string } } = {
-    'citybike-001': { name: 'CityBike', price: '$1 to unlock' },
-    'flowscoot-001': { name: 'FlowScoot', price: '$0.30/min' },
-    'cycleplus-001': { name: 'Cycle+', price: '$0.25/min' },
+    'citybike-001': { name: 'CityBike', price: '₹80 to unlock' },
+    'flowscoot-001': { name: 'FlowScoot', price: '₹24/min' },
+    'cycleplus-001': { name: 'Cycle+', price: '₹20/min' },
 };
 
 const iconMap = {

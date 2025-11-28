@@ -41,7 +41,7 @@ export default function SmartParking() {
         <div key={lot.id} className="flex items-center justify-between gap-2 rounded-md border p-3">
           <div>
             <p className="font-semibold">{lot.name}</p>
-            <p className="text-sm text-muted-foreground">${lot.pricePerHour}/hr</p>
+            <p className="text-sm text-muted-foreground">₹{lot.pricePerHour}/hr</p>
           </div>
           <Badge variant={lot.availableSpaces > 0 ? 'default' : 'destructive'} className="bg-accent text-accent-foreground shrink-0">
             {lot.availableSpaces > 0 ? `${lot.availableSpaces} spots` : 'Full'}
