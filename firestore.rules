@@ -10,25 +10,33 @@
  *
  * Data Structure:
  * Data is organized into logical, top-level collections for each major feature:
+ * - /users/{userId}
  * - /parking_lots/{parkingLotId}
  * - /public_transport_routes/{routeId}
  * - /public_transport_stops/{stopId}
  * - /micro_mobility_vehicles/{vehicleId}
  *
- * Real-time or frequently changing data is nested in subcollections (e.g., /parking_lots/.../sensors)
- * to allow for efficient and targeted updates from the backend without affecting the parent documents.
- *
  * Key Security Decisions:
- * - Public Read Access: All collections and subcollections are publicly readable (`get`, `list`)
+ * - User Profiles: Users can create their own profile upon sign-up. They can only read and update their own
+ *   profile, and cannot view other users' profiles.
+ * - Public Read Access: All other collections are publicly readable (`get`, `list`)
  *   to provide real-time information to all app users without requiring authentication.
- * - Client Writes Disabled (with exception for seeding): All write permissions (`create`, `update`, `delete`) are explicitly
- *   denied for general client-side operations. A specific rule allows creation only when seeding data.
- * - No User-Specific Data: The model does not contain any user-specific or private data, simplifying
- *   the rules and eliminating the need for ownership or role-based access checks.
+ * - Client Writes Disabled (with exceptions): All write permissions (`create`, `update`, `delete`) are explicitly
+ *   denied for general client-side operations, except for user profile creation and the initial database seeding.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    /**
+     * @description Allows a user to create their own profile, and read/update their own data.
+     * @path /users/{userId}
+     */
+    match /users/{userId} {
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+      allow delete, list: if false;
+    }
 
     /**
      * @description Provides public, read-only access to parking lot information. Allows creation for seeding.
@@ -36,7 +44,7 @@ service cloud.firestore {
      */
     match /parking_lots/{parkingLotId} {
       allow read: if true;
-      allow create: if request.resource.data.seeding == true;
+      allow create, write: if request.resource.data.seeding == true;
       allow update, delete: if false;
 
       /**
@@ -55,7 +63,7 @@ service cloud.firestore {
      */
     match /public_transport_routes/{routeId} {
       allow read: if true;
-      allow create: if request.resource.data.seeding == true;
+      allow create, write: if request.resource.data.seeding == true;
       allow update, delete: if false;
 
       /**
@@ -83,8 +91,9 @@ service cloud.firestore {
      */
     match /micro_mobility_vehicles/{vehicleId} {
       allow read: if true;
-      allow create: if request.resource.data.seeding == true;
+      allow create, write: if request.resource.data.seeding == true;
       allow update, delete: if false;
     }
   }
 }
+    

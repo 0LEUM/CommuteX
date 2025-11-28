@@ -66,8 +66,13 @@ export default function SeedDatabase() {
         });
       })
       .catch((error) => {
+        toast({
+          variant: 'destructive',
+          title: 'Seeding Failed',
+          description: 'Could not seed the database. Check permissions.',
+        });
         // Since batch writes don't give individual document context,
-        // we create a more general error.
+        // we create a more general error for the developer overlay.
         const permissionError = new FirestorePermissionError({
           path: `[batch operation]`,
           operation: 'write',

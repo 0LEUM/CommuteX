@@ -11,7 +11,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 
 const GenerateMapImageInputSchema = z.object({
   startLocation: z.string().describe('The starting point of the route.'),
@@ -38,7 +38,7 @@ const generateMapImageFlow = ai.defineFlow(
   async ({ startLocation, endLocation, routeSummary }) => {
     const { media } = await ai.generate({
       model: 'googleai/imagen-4.0-fast-generate-001',
-      prompt: `Generate a visually appealing and clear map image that shows a route from "${startLocation}" to "${endLocation}". The style should be a modern digital map. The route should be clearly highlighted. The map should be conceptual and represent the journey described: "${routeSummary}". Do not include any real-world street names unless they are in the locations. The image should be clean, with a clear path from start to finish.`,
+      prompt: `Generate a realistic map image in the style of a modern navigation app like Google Maps or Uber. The map should clearly show a route from a starting point labeled "${startLocation}" to an ending point labeled "${endLocation}". The route should be drawn as a prominent blue line on the map. The map style should be clean and clear, with minimalistic street grids, representing the journey described as: "${routeSummary}". Do not use any real-world street names unless they are part of the start or end location names. The final image should look like a screenshot from a high-quality cab service app's route display.`,
       config: {
         safetySettings: [
           {
