@@ -2,7 +2,6 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import Image from 'next/image';
 import { Route, Navigation, Loader2, Clock, DollarSign, FileText, AlertCircle, Sparkles, Map } from 'lucide-react';
 import { getOptimalRoute, State } from '@/app/actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -11,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from './ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import GoogleMapView from './google-map-view';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -22,10 +22,16 @@ function SubmitButton() {
   );
 }
 
+// Extend state data to include start and end locations for the map
+interface RouteData extends NonNullable<State['data']> {
+  startLocation?: string;
+  endLocation?: string;
+}
+
 export default function RouteOptimizer() {
   const initialState: State = { message: null, errors: {} };
   const [state, dispatch] = useActionState(getOptimalRoute, initialState);
-  const generatedMapImage = state.data?.mapImageUrl;
+  const routeData = state.data as RouteData | null;
 
   return (
     <Card className="w-full overflow-hidden shadow-lg">
@@ -74,14 +80,14 @@ export default function RouteOptimizer() {
             </TabsList>
             <div className="flex-1 p-4">
               <TabsContent value="details">
-                 {state.data ? (
+                 {routeData ? (
                   <div className="flex flex-col gap-4 text-sm">
                       <div>
                         <div className="flex items-center gap-2 font-semibold">
                           <FileText className="h-4 w-4 text-primary"/>
                           <span>Summary</span>
                         </div>
-                        <p className="pl-6 text-muted-foreground">{state.data.routeSummary}</p>
+                        <p className="pl-6 text-muted-foreground">{routeData.routeSummary}</p>
                       </div>
                       <Separator />
                       <div className="grid grid-cols-2 gap-4">
@@ -89,12 +95,12 @@ export default function RouteOptimizer() {
                               <Clock className="h-4 w-4 text-primary"/>
                               <span>Travel Time</span>
                           </div>
-                          <p className="text-right text-muted-foreground">{state.data.estimatedTravelTime}</p>
+                          <p className="text-right text-muted-foreground">{routeData.estimatedTravelTime}</p>
                           <div className="flex items-center gap-2 font-semibold">
                               <DollarSign className="h-4 w-4 text-primary"/>
                               <span>Est. Cost</span>
                           </div>
-                          <p className="text-right text-muted-foreground">{state.data.costEstimate}</p>
+                          <p className="text-right text-muted-foreground">{routeData.costEstimate}</p>
                       </div>
                       <Separator />
                       <div>
@@ -103,7 +109,7 @@ export default function RouteOptimizer() {
                               <span>Route Details</span>
                           </div>
                           <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-wrap rounded-md bg-background/50 p-3">
-                            {state.data.optimalRoute}
+                            {routeData.optimalRoute}
                           </div>
                       </div>
                   </div>
@@ -114,9 +120,12 @@ export default function RouteOptimizer() {
                 )}
               </TabsContent>
               <TabsContent value="map">
-                {generatedMapImage ? (
+                {routeData?.startLocation && routeData?.endLocation ? (
                    <div className="relative aspect-video w-full overflow-hidden rounded-md">
-                     <Image src={generatedMapImage} alt="AI generated map of the route" fill className="object-cover" />
+                     <GoogleMapView 
+                       startLocation={routeData.startLocation}
+                       endLocation={routeData.endLocation}
+                     />
                   </div>
                 ) : (
                   <div className="flex h-full min-h-[200px] items-center justify-center">

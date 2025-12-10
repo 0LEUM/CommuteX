@@ -7,35 +7,35 @@ import { getFirestore, Firestore } from 'firebase/firestore'
 
 type FirebaseSdks = {
   firebaseApp: FirebaseApp;
-  auth: Auth;
-  firestore: Firestore;
-}
-
-export function initializeFirebase(): FirebaseSdks {
-  if (!getApps().length) {
-    // When deploying to any environment other than Firebase App Hosting,
-    // we need to explicitly provide the configuration.
-    const firebaseApp = initializeApp(firebaseConfig);
-    return getSdks(firebaseApp);
-  }
-
-  // If already initialized, return the SDKs with the already initialized App
-  return getSdks(getApp());
-}
-
-export function getSdks(firebaseApp: FirebaseApp): FirebaseSdks {
-  return {
-    firebaseApp,
-    auth: getAuth(firebaseApp),
-    firestore: getFirestore(firebaseApp)
-  };
-}
-
-export * from './provider';
-export * from './client-provider';
-export * from './firestore/use-collection';
-export * from './firestore/use-doc';
-export * from './non-blocking-updates';
-export * from './non-blocking-login';
-export * from './errors';
-export * from './error-emitter';
+    auth: Auth;
+      firestore: Firestore;
+      }
+      
+      export function initializeFirebase(): FirebaseSdks {
+        if (!getApps().length) {
+            // When deploying to any environment other than Firebase App Hosting,
+                // we need to explicitly provide the configuration.
+                    const firebaseApp = initializeApp(firebaseConfig);
+                        return getSdks(firebaseApp);
+                          }
+                          
+                            // If already initialized, return the SDKs with the already initialized App
+                              return getSdks(getApp());
+                              }
+                              
+                              export function getSdks(firebaseApp: FirebaseApp): FirebaseSdks {
+                                return {
+                                    firebaseApp,
+                                        auth: getAuth(firebaseApp),
+                                            firestore: getFirestore(firebaseApp)
+                                              };
+                                              }
+                                              
+                                              export * from './provider';
+                                              export * from './client-provider';
+                                              export * from './firestore/use-collection';
+                                              export * from './firestore/use-doc';
+                                              export * from './non-blocking-updates';
+                                              export * from './non-blocking-login';
+                                              export * from './errors';
+                                              export * from './error-emitter';
