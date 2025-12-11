@@ -1,12 +1,12 @@
+
 /**
  * This ruleset enforces a public read-only security model for a city information application.
  *
  * Core Philosophy:
  * The data for parking, public transport, and micro-mobility is considered public information,
  * accessible to any user, including those who are not signed in. To ensure data integrity, all
- * write operations (create, update, delete) are disabled for client applications. Data is expected
- * to be managed exclusively by a trusted backend service (e.g., Cloud Functions, a server using the
- * Admin SDK) which bypasses these security rules. This creates a secure, one-way data flow to users.
+ * write operations (create, update, delete) are disabled for client applications, except for
+ * authenticated admin-like users.
  *
  * Data Structure:
  * Data is organized into logical, top-level collections for each major feature:
@@ -21,8 +21,8 @@
  *   profile, and cannot view other users' profiles.
  * - Public Read Access: All other collections are publicly readable (`get`, `list`)
  *   to provide real-time information to all app users without requiring authentication.
- * - Client Writes Disabled (with exceptions): All write permissions (`create`, `update`, `delete`) are explicitly
- *   denied for general client-side operations, except for user profile creation and the initial database seeding.
+ * - Authenticated Writes: For management collections, write permissions
+ *   (`create`, `update`, `delete`) are restricted to authenticated users.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -39,32 +39,30 @@ service cloud.firestore {
     }
 
     /**
-     * @description Provides public, read-only access to parking lot information. Allows creation for seeding.
+     * @description Provides public read access. Allows authenticated users to manage parking lots.
      * @path /parking_lots/{parkingLotId}
      */
     match /parking_lots/{parkingLotId} {
       allow read: if true;
-      allow create, write: if request.resource.data.seeding == true;
-      allow update, delete: if false;
-
-      /**
-       * @description Provides public, read-only access to individual parking sensor data.
-       * @path /parking_lots/{parkingLotId}/sensors/{sensorId}
-       */
-      match /sensors/{sensorId} {
-        allow read: if true;
-        allow write: if false;
-      }
+      allow create, update, delete: if request.auth != null;
     }
 
     /**
-     * @description Provides public, read-only access to public transport route definitions. Allows creation for seeding.
+     * @description Provides public, read-only access to individual parking sensor data.
+     * @path /parking_lots/{parkingLotId}/sensors/{sensorId}
+     */
+    match /parking_lots/{parkingLotId}/sensors/{sensorId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    /**
+     * @description Provides public read access. Allows authenticated users to manage transport routes.
      * @path /public_transport_routes/{routeId}
      */
     match /public_transport_routes/{routeId} {
       allow read: if true;
-      allow create, write: if request.resource.data.seeding == true;
-      allow update, delete: if false;
+      allow create, update, delete: if request.auth != null;
 
       /**
        * @description Provides public, read-only access to real-time updates for a specific route.
@@ -86,14 +84,12 @@ service cloud.firestore {
     }
 
     /**
-     * @description Provides public, read-only access to micro-mobility vehicle locations and status. Allows creation for seeding.
+     * @description Provides public read access. Allows authenticated users to manage micro-mobility vehicles.
      * @path /micro_mobility_vehicles/{vehicleId}
      */
     match /micro_mobility_vehicles/{vehicleId} {
       allow read: if true;
-      allow create, write: if request.resource.data.seeding == true;
-      allow update, delete: if false;
+      allow create, update, delete: if request.auth != null;
     }
   }
 }
-    

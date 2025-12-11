@@ -12,11 +12,6 @@ import { FirestorePermissionError } from './errors';
 
 type ErrorCallback = (error: any) => void;
 
-/** Initiate anonymous sign-in (non-blocking). */
-export function initiateAnonymousSignIn(authInstance: Auth, onError?: ErrorCallback): void {
-  signInAnonymously(authInstance).catch(onError);
-}
-
 /** Initiate email/password sign-up (non-blocking). */
 export function initiateEmailSignUp(authInstance: Auth, email: string, password: string, onError?: ErrorCallback): void {
   createUserWithEmailAndPassword(authInstance, email, password)

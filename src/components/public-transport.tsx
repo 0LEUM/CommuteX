@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
@@ -8,8 +9,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
 
 interface PublicTransportRoute {
+  id: string;
   routeName: string;
   type: 'bus' | 'metro' | 'ferry';
+  price: number;
+  status: 'On Time' | 'Delayed';
   stops: string[]; // This would be IDs to another collection
 }
 
@@ -18,13 +22,6 @@ const stopIdToName: { [key: string]: string } = {
   'stop-north-1': 'North District',
   'stop-financial-1': 'Financial Core',
   'stop-west-island-1': 'West Island',
-};
-
-// A mock for real-time updates which would come from another collection
-const routeIdToRealtime: { [key: string]: { status: 'On Time' | 'Delayed' } } = {
-  'route-1': { status: 'On Time' },
-  'route-2': { status: 'Delayed' },
-  'route-3': { status: 'On Time' },
 };
 
 const iconMap = {
@@ -64,8 +61,7 @@ export default function PublicTransport() {
   return (
     <div className="flex flex-col gap-3">
       {routes?.map((line) => {
-        const destination = line.stops.length > 0 ? stopIdToName[line.stops[0]] || 'Unknown' : 'Unknown';
-        const realtime = routeIdToRealtime[line.id] || { status: 'On Time' };
+        const destination = line.stops?.length > 0 ? stopIdToName[line.stops[0]] || 'Unknown' : 'Mainline';
         const Icon = iconMap[line.type] || Bus;
         
         return (
@@ -74,11 +70,13 @@ export default function PublicTransport() {
               <Icon className="h-5 w-5 text-muted-foreground"/>
               <div>
                 <p className="font-semibold">{line.routeName}</p>
-                <p className="text-sm text-muted-foreground">{destination}</p>
+                <p className="text-sm text-muted-foreground">
+                  ₹{typeof line.price === 'number' ? line.price.toFixed(2) : '0.00'} • {destination}
+                </p>
               </div>
             </div>
-            <Badge variant={realtime.status === 'On Time' ? 'default' : 'outline'} className={realtime.status === 'On Time' ? 'bg-accent text-accent-foreground' : ''}>
-              {realtime.status}
+            <Badge variant={line.status === 'On Time' ? 'default' : 'destructive'} className={`${line.status === 'On Time' ? 'bg-accent text-accent-foreground' : ''}`}>
+              {line.status}
             </Badge>
           </div>
         )

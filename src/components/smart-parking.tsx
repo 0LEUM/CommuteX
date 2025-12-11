@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface ParkingLot {
+  id: string;
   name: string;
   pricePerHour: string;
   availableSpaces: number;
@@ -43,7 +44,7 @@ export default function SmartParking() {
             <p className="font-semibold">{lot.name}</p>
             <p className="text-sm text-muted-foreground">₹{lot.pricePerHour}/hr</p>
           </div>
-          <Badge variant={lot.availableSpaces > 0 ? 'default' : 'destructive'} className="bg-accent text-accent-foreground shrink-0">
+          <Badge variant={lot.availableSpaces > 0 ? 'default' : 'destructive'} className={`${lot.availableSpaces > 0 ? 'bg-accent text-accent-foreground' : ''} shrink-0`}>
             {lot.availableSpaces > 0 ? `${lot.availableSpaces} spots` : 'Full'}
           </Badge>
         </div>

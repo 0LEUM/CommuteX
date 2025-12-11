@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
@@ -8,16 +9,13 @@ import { Bike, Zap } from "lucide-react";
 import React from "react";
 
 interface MicroMobilityVehicle {
+  id: string;
+  name: string;
   type: 'bike' | 'e-scooter';
-  id: string; // The vehicle ID is usually the name
+  price: string;
   batteryLevel?: number;
+  available: boolean;
 }
-
-const vehicleIdToDetails: { [key: string]: { name: string, price: string } } = {
-    'citybike-001': { name: 'CityBike', price: '₹80 to unlock' },
-    'flowscoot-001': { name: 'FlowScoot', price: '₹24/min' },
-    'cycleplus-001': { name: 'Cycle+', price: '₹20/min' },
-};
 
 const iconMap = {
     'bike': Bike,
@@ -55,8 +53,7 @@ export default function MicroMobility() {
   return (
     <div className="flex flex-col gap-3">
       {vehicles?.map((vehicle) => {
-        const details = vehicleIdToDetails[vehicle.id] || { name: 'Unknown Vehicle', price: 'N/A' };
-        const range = vehicle.batteryLevel ? `${vehicle.batteryLevel}% battery` : 'N/A';
+        const range = vehicle.type === 'e-scooter' ? `${vehicle.batteryLevel}% battery` : 'Mechanical';
         const Icon = iconMap[vehicle.type] || Bike;
 
         return (
@@ -64,11 +61,15 @@ export default function MicroMobility() {
             <div className="flex items-center gap-3">
               <Icon className="h-5 w-5 text-muted-foreground"/>
               <div>
-                <p className="font-semibold">{details.name}</p>
+                <p className="font-semibold">{vehicle.name}</p>
                 <p className="text-sm text-muted-foreground">{range}</p>
               </div>
             </div>
-              <Badge variant="default" className="bg-accent text-accent-foreground">{details.price}</Badge>
+            {vehicle.available ? 
+              <Badge variant="default" className="bg-accent text-accent-foreground">{vehicle.price}</Badge>
+              :
+              <Badge variant="secondary">In Use</Badge>
+            }
           </div>
         )
       })}

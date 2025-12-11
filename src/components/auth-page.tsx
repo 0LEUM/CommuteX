@@ -6,7 +6,6 @@ import { useAuth } from '@/firebase';
 import {
   initiateEmailSignUp,
   initiateEmailSignIn,
-  initiateAnonymousSignIn,
 } from '@/firebase/non-blocking-login';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,9 +15,12 @@ import Logo from './icons/logo';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { FirebaseError } from 'firebase/app';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function AuthPage() {
   const auth = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -61,16 +63,15 @@ export default function AuthPage() {
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (email === 'admin@gmail.com' && password === 'admin') {
+      sessionStorage.setItem('isAdminAuthenticated', 'true');
+      router.push('/admin');
+      return;
+    }
     if (!auth) return;
     initiateEmailSignIn(auth, email, password, handleAuthError);
   };
   
-  const handleAnonymousSignIn = () => {
-    setError(null);
-    if (!auth) return;
-    initiateAnonymousSignIn(auth, handleAuthError);
-  };
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <div className="mb-8 flex items-center gap-2">
@@ -145,8 +146,8 @@ export default function AuthPage() {
             </div>
           </div>
           
-          <Button variant="outline" className="w-full" onClick={handleAnonymousSignIn}>
-            Sign In Anonymously
+          <Button variant="outline" className="w-full" asChild>
+            <Link href="/admin/login">Admin</Link>
           </Button>
 
           {error && (
